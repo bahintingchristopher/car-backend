@@ -33,7 +33,7 @@
 
     <h2>Add New Car</h2>
     <div class="form-box">
-        <form method="POST" action="{{ url_for('add_car') }}">
+        <form method="POST" action="{{ url_for('add_car') }}" enctype="multipart/form-data">
             <input type="text" name="name" placeholder="Car Name" required>
             <input type="text" name="image" placeholder="Image filename (e.g. civic.jpg)" required>
             <input type="text" name="price" placeholder="Price" required>

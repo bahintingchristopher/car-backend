@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
+for werkzeug.utils import secure_filename #new import
 import json, os
 from flask_cors import CORS
 
@@ -18,6 +19,37 @@ def load_cars():
         with open(DATA_FILE, "r") as f:
             return json.load(f)
     return []
+    
+# File upload configuration
+UPLOADER_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOADER_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route("admin/add", methods=['POST'])
+def add_car_with_image():
+    if 'image' not in request.files:
+        return redirect(request.url)
+    file = request.files['image']
+    if file.filename == '':
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Now save the car data
+        cars = load_cars()
+        new_car = {
+            "name": request.form["name"],
+            "image": filename,  # Save only the filename
+            "price": request.form["price"]
+        }
+        cars.append(new_car)
+        save_cars(cars)
+        return redirect(url_for("admin"))
+    
+
+
+
 
 # Save car data
 def save_cars(cars):
