@@ -3,7 +3,7 @@ import json, os
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # ✅ Allow frontend (GitHub Pages) to fetch data
+CORS(app)  # Allow frontend (GitHub Pages) to fetch data
 
 DATA_FILE = "cars.json"
 
@@ -24,12 +24,16 @@ def save_cars(cars):
     with open(DATA_FILE, "w") as f:
         json.dump(cars, f, indent=4)
 
-# ✅ API endpoint for frontend
+# API endpoint for frontend
 @app.route("/cars", methods=["GET"])
 def get_cars():
-    return jsonify(load_cars())
+    # Update image paths for frontend
+    cars = load_cars()
+    for car in cars:
+        car["image"] = f"/static/uploads/{car['image']}"
+    return jsonify(cars)
 
-# ✅ Admin Panel
+# Admin Panel
 @app.route("/admin")
 def admin():
     cars = load_cars()
@@ -40,7 +44,7 @@ def add_car():
     cars = load_cars()
     new_car = {
         "name": request.form["name"],
-        "image": request.form["image"],   # filename like "civic.jpg"
+        "image": request.form["image"],  # filename like "civic.jpg"
         "price": request.form["price"]
     }
     cars.append(new_car)
@@ -64,6 +68,11 @@ def delete_car(car_id):
         cars.pop(car_id)
         save_cars(cars)
     return redirect(url_for("admin"))
+
+@app.route("/")
+def home():
+    return "Backend is running! Use /cars or /admin."
+
 
 if __name__ == "__main__":
     # Use Render's port or default to 10000 for local testing
