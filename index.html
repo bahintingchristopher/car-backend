@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lapu-lapu Car Dealer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="logo">
+        <img src="images/W.png" alt="W">
+    </div>
+    <div class="company_name">
+        <h1>Bahins AutoCars</h1>
+    </div>
+
+    <div class="menu_button">
+        <button>
+            <img src="images/menu_button.jpg" alt="menu_button">
+        </button>
+    </div>
+
+    <nav class="navbar">
+      <a href="index.html">Home</a>
+      <a href="car.html">Cars For Sale</a>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="hero">
+        <h2>Find the Perfect Car for Your Lifestyle and Budget</h2>
+        <img src="images/hero_display_center.jpg" alt="">
+        <video 
+            src="images/hero_video.mp4" 
+            controls 
+            preload="auto"
+            style="width: 100%; max-height: 300px; object-fit: cover;">
+            Your browser does not support the video tag.
+        </video>
+      
+        <video 
+            src="images/hero_video2.mp4" 
+            controls 
+            preload="auto"
+            style="width: 100%;  object-fit: cover;">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="highlighted">
+        <h2>Hot Picks Under Your Budget</h2>
+    </div>
+
+    <!-- Car listings (dynamic) -->
+    <section class="highlighted-cars" id="cars-container">
+        <!-- Cars will load here dynamically -->
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        
+        <div class="nav_links">
+          <h3>Quick Links</h3>
+          <a href="index.html">Home</a>
+          <a href="car.html">Cars For Sale</a>
+          <a href="about.html">About Us</a>
+          <a href="contact.html">Contact</a>
+        </div>
+
+        <p>&copy; 2025 | Bahins Web & Software Solutions</p>
+
+        <div class="social-icons">
+          <a href="#"><img src="images/fb_icon.jpg" alt="Facebook Icon" /></a>
+          <a href="#"><img src="images/linkedin_icon.png" alt="LinkedIn Icon" /></a>
+          <a href="#"><img src="images/wattsapp_icon.png" alt="WhatsApp Icon" /></a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ✅ Place JavaScript at the bottom -->
+<script>
+  // Your Render backend URL
+  const BACKEND_URL = "https://car-backend-4zsn.onrender.com";
+
+  fetch(`${BACKEND_URL}/cars`)
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById("cars-container");
+      container.innerHTML = "";
+
+      data.forEach(car => {
+    const carCard = document.createElement("div");
+    carCard.classList.add("car-card");
+    carCard.innerHTML = `
+      <img src="${car.image}" alt="${car.name}" width="250">
+      <h3>${car.name}</h3>
+      <p>Price: ${car.price}</p>
+    `;
+    container.appendChild(carCard);
+});
+
+    })
+    .catch(err => {
+      console.error("Error fetching cars:", err);
+    });
+</script>
+</body>
+</html>
