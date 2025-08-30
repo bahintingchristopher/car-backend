@@ -28,12 +28,9 @@ def save_cars(cars):
 @app.route("/cars", methods=["GET"])
 def get_cars():
     cars = load_cars()
-    base_url = "https://car-backend-4zsn.onrender.com/static/uploads/"
     
-    for car in cars:
-        # Ensure only filename is used to avoid duplicating paths
-        filename = os.path.basename(car["image"])
-        car["image"] = f"{base_url}{filename}"
+    
+    
     
     return jsonify(cars)
 
