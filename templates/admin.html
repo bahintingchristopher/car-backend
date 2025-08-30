@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Car Admin Panel</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .car-card { border: 1px solid #ccc; padding: 10px; margin: 10px; }
+        .form-box { margin: 20px 0; padding: 10px; border: 1px solid #666; }
+        img { max-width: 150px; }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+
+    <h2>Current Cars</h2>
+    {% for car in cars %}
+        <div class="car-card">
+            <img src="{{ url_for('static', filename='uploads/' + car.image) }}" alt="{{ car.name }}">
+            <p><b>{{ car.name }}</b> - ₱{{ car.price }}</p>
+
+            <!-- Edit Form -->
+            <form method="POST" action="{{ url_for('edit_car', car_id=loop.index0) }}">
+                <input type="text" name="name" value="{{ car.name }}">
+                <input type="text" name="image" value="{{ car.image }}">
+                <input type="text" name="price" value="{{ car.price }}">
+                <button type="submit">Update</button>
+            </form>
+
+            <!-- Delete Button -->
+            <a href="{{ url_for('delete_car', car_id=loop.index0) }}" onclick="return confirm('Delete this car?')">Delete</a>
+        </div>
+    {% endfor %}
+
+    <h2>Add New Car</h2>
+    <div class="form-box">
+        <form method="POST" action="{{ url_for('add_car') }}">
+            <input type="text" name="name" placeholder="Car Name" required>
+            <input type="text" name="image" placeholder="Image filename (e.g. civic.jpg)" required>
+            <input type="text" name="price" placeholder="Price" required>
+            <button type="submit">Add Car</button>
+        </form>
+    </div>
+</body>
+</html>
