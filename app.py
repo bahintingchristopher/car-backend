@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
 import json, os
 from flask_cors import CORS
 
@@ -6,6 +6,11 @@ app = Flask(__name__)
 CORS(app)  # ✅ Allow frontend (GitHub Pages) to fetch data
 
 DATA_FILE = "cars.json"
+
+# Serve uploaded images
+@app.route("/static/uploads/<path:filename>")
+def uploaded_file(filename):
+    return send_from_directory("static/uploads", filename)
 
 # Load car data
 def load_cars():
