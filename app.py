@@ -30,7 +30,9 @@ def get_cars():
     # Update image paths for frontend
     cars = load_cars()
     for car in cars:
-        car["image"] = f"/static/uploads/{car['image']}"
+    
+        car["image"] = f"https://car-backend-4zsn.onrender.com/static/uploads/{car['image']}"
+
     return jsonify(cars)
 
 # Admin Panel
