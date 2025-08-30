@@ -79,30 +79,29 @@
 
     <!-- ✅ Place JavaScript at the bottom -->
 <script>
-  // Your Render backend URL
-  const BACKEND_URL = "https://car-backend-4zsn.onrender.com";
+const BACKEND_URL = "https://car-backend-4zsn.onrender.com";
 
-  fetch(`${BACKEND_URL}/cars`)
-    .then(response => response.json())
-    .then(data => {
-      const container = document.getElementById("cars-container");
-      container.innerHTML = "";
+fetch(`${BACKEND_URL}/cars`)
+  .then(response => response.json())
+  .then(data => {
+    const container = document.getElementById("cars-container");
+    container.innerHTML = "";
 
-      data.forEach(car => {
-    const carCard = document.createElement("div");
-    carCard.classList.add("car-card");
-    carCard.innerHTML = `
-      <img src="${car.image}" alt="${car.name}" width="250">
-      <h3>${car.name}</h3>
-      <p>Price: ${car.price}</p>
-    `;
-    container.appendChild(carCard);
-});
+    data.forEach(car => {
+      const carDiv = document.createElement("div");
+      carDiv.classList.add("car"); // Use "car" if your JS interactions depend on it
 
-    })
-    .catch(err => {
-      console.error("Error fetching cars:", err);
+      carDiv.innerHTML = `
+        <img src="${car.image}" alt="${car.name}" width="250">
+        <h3>${car.name}</h3>
+        <p>Price: ${car.price}</p>
+      `;
+
+      container.appendChild(carDiv);
     });
+  })
+  .catch(err => console.error("Error fetching cars:", err));
 </script>
+
 </body>
 </html>
