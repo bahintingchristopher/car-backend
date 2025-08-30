@@ -1,17 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory
-for werkzeug.utils import secure_filename #new import
+from werkzeug.utils import secure_filename
 import json, os
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Allow frontend (GitHub Pages) to fetch data
+CORS(app)  # Allow frontend (GitHub Pages) to fetch data 
 
 DATA_FILE = "cars.json"
+
+# File upload configuration this is new
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Serve uploaded images
 @app.route("/static/uploads/<path:filename>")
 def uploaded_file(filename):
-    return send_from_directory("static/uploads", filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # Load car data
 def load_cars():
@@ -20,37 +28,6 @@ def load_cars():
             return json.load(f)
     return []
     
-# File upload configuration
-UPLOADER_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOADER_FOLDER
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-@app.route("admin/add", methods=['POST'])
-def add_car_with_image():
-    if 'image' not in request.files:
-        return redirect(request.url)
-    file = request.files['image']
-    if file.filename == '':
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Now save the car data
-        cars = load_cars()
-        new_car = {
-            "name": request.form["name"],
-            "image": filename,  # Save only the filename
-            "price": request.form["price"]
-        }
-        cars.append(new_car)
-        save_cars(cars)
-        return redirect(url_for("admin"))
-    
-
-
-
-
 # Save car data
 def save_cars(cars):
     with open(DATA_FILE, "w") as f:
@@ -68,28 +45,46 @@ def admin():
     cars = load_cars()
     return render_template("admin.html", cars=cars)
 
+# Route to add a new car (with image upload)
 @app.route("/admin/add", methods=["POST"])
 def add_car():
-    cars = load_cars()
-    new_car = {
-        "name": request.form["name"],
-        "image": request.form["image"],  # filename like "civic.jpg"
-        "price": request.form["price"]
-    }
-    cars.append(new_car)
-    save_cars(cars)
-    return redirect(url_for("admin"))
+    if 'image' not in request.files:
+        return redirect(request.url)
 
+    file = request.files['image']
+
+    if file.filename == '':
+        return redirect(request.url)
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        
+        # Now save the car data
+        cars = load_cars()
+        new_car = {
+            "name": request.form["name"],
+            "image": filename,  # Save only the filename
+            "price": request.form["price"]
+        }
+        cars.append(new_car)
+        save_cars(cars)
+        return redirect(url_for("admin"))
+
+# Route to edit an existing car
 @app.route("/admin/edit/<int:car_id>", methods=["POST"])
 def edit_car(car_id):
     cars = load_cars()
     if 0 <= car_id < len(cars):
         cars[car_id]["name"] = request.form["name"]
+        # NOTE: This part needs to be updated if you want to allow image changes.
+        # Right now, it just reuses the existing filename.
         cars[car_id]["image"] = request.form["image"]
         cars[car_id]["price"] = request.form["price"]
         save_cars(cars)
     return redirect(url_for("admin"))
 
+# Route to delete a car
 @app.route("/admin/delete/<int:car_id>")
 def delete_car(car_id):
     cars = load_cars()
@@ -100,7 +95,7 @@ def delete_car(car_id):
 
 @app.route("/")
 def home():
-     return redirect(url_for("get_cars"))
+    return redirect(url_for("get_cars"))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
