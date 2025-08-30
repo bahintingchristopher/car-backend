@@ -27,11 +27,7 @@ def save_cars(cars):
 # API endpoint for frontend
 @app.route("/cars", methods=["GET"])
 def get_cars():
-    cars = load_cars()
-    
-    
-    
-    
+    cars = load_cars()     
     return jsonify(cars)
 
 # Admin Panel
