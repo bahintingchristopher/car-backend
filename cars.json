@@ -1,12 +1,12 @@
 [
   {
+    "image": "https://car-backend-4zsn.onrender.com/static/uploads/Honda_civic.jpg",
     "name": "Honda Civic",
-    "price": "1,200,000",
-    "image": "https://car-backend-4zsn.onrender.com/static/uploads/civic.jpg"
+    "price": "1,200,000"
   },
   {
+    "image": "https://car-backend-4zsn.onrender.com/static/uploads/Toyota_vios.jpg",
     "name": "Toyota Vios",
-    "price": "900,000",
-    "image": "https://car-backend-4zsn.onrender.com/static/uploads/vios.jpg"
+    "price": "900,000"
   }
 ]
