@@ -71,7 +71,7 @@ def delete_car(car_id):
 
 @app.route("/")
 def home():
-    return "Backend is running! Use /cars or /admin."
+     return redirect(url_for("get_cars"))
 
 
 if __name__ == "__main__":
