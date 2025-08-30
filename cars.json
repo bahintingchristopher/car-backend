@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Honda Civic",
+    "price": "1,200,000",
+    "image": "civic.jpg"
+  },
+  {
+    "name": "Toyota Vios",
+    "price": "900,000",
+    "image": "vios.jpg"
+  }
+]

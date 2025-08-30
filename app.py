@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import json, os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # ✅ This allows GitHub Pages frontend to fetch data
+
 DATA_FILE = "cars.json"
 
 # Load car data
