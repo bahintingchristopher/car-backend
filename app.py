@@ -27,12 +27,14 @@ def save_cars(cars):
 # API endpoint for frontend
 @app.route("/cars", methods=["GET"])
 def get_cars():
-    # Update image paths for frontend
     cars = load_cars()
-    for car in cars:
+    base_url = "https://car-backend-4zsn.onrender.com/static/uploads/"
     
-        car["image"] = f"https://car-backend-4zsn.onrender.com/static/uploads/{car['image']}"
-
+    for car in cars:
+        # Ensure only filename is used to avoid duplicating paths
+        filename = os.path.basename(car["image"])
+        car["image"] = f"{base_url}{filename}"
+    
     return jsonify(cars)
 
 # Admin Panel
@@ -75,8 +77,6 @@ def delete_car(car_id):
 def home():
      return redirect(url_for("get_cars"))
 
-
 if __name__ == "__main__":
-    # Use Render's port or default to 10000 for local testing
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=True)
