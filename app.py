@@ -4,11 +4,11 @@ import json, os
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Allow frontend (GitHub Pages) to fetch data 
+CORS(app)  # Allow frontend (GitHub Pages) to fetch data
 
 DATA_FILE = "cars.json"
 
-# File upload configuration this is new
+# File upload configuration
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -33,10 +33,19 @@ def save_cars(cars):
     with open(DATA_FILE, "w") as f:
         json.dump(cars, f, indent=4)
 
-# API endpoint for frontend
+# API endpoint for frontend (with image URL fix)
 @app.route("/cars", methods=["GET"])
 def get_cars():
-    cars = load_cars()     
+    cars = load_cars()
+    
+    # Get the base URL of the live application
+    # This ensures the image URL is correct whether you're on localhost or Render
+    base_url = request.host_url
+    
+    # Add the full image URL to each car object
+    for car in cars:
+        car['image_url'] = f"{base_url}static/uploads/{car['image']}"
+        
     return jsonify(cars)
 
 # Admin Panel
@@ -64,7 +73,7 @@ def add_car():
         cars = load_cars()
         new_car = {
             "name": request.form["name"],
-            "image": filename,  # Save only the filename
+            "image": filename,
             "price": request.form["price"]
         }
         cars.append(new_car)
@@ -77,8 +86,6 @@ def edit_car(car_id):
     cars = load_cars()
     if 0 <= car_id < len(cars):
         cars[car_id]["name"] = request.form["name"]
-        # NOTE: This part needs to be updated if you want to allow image changes.
-        # Right now, it just reuses the existing filename.
         cars[car_id]["image"] = request.form["image"]
         cars[car_id]["price"] = request.form["price"]
         save_cars(cars)
