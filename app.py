@@ -3,7 +3,7 @@ import json, os
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # ✅ This allows GitHub Pages frontend to fetch data
+CORS(app)  # ✅ Allow frontend (GitHub Pages) to fetch data
 
 DATA_FILE = "cars.json"
 
@@ -19,7 +19,7 @@ def save_cars(cars):
     with open(DATA_FILE, "w") as f:
         json.dump(cars, f, indent=4)
 
-# ✅ API endpoint for frontend (GitHub Pages will fetch this)
+# ✅ API endpoint for frontend
 @app.route("/cars", methods=["GET"])
 def get_cars():
     return jsonify(load_cars())
@@ -61,4 +61,6 @@ def delete_car(car_id):
     return redirect(url_for("admin"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Use Render's port or default to 10000 for local testing
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=True)
